@@ -148,4 +148,6 @@ Payload format:
 
 ## 🌟 GitHub Stars
 
-![Star History](https://api.star-history.com/svg?repos=manish-raana/openclaw-mission-control&type=Date)
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=manish-raana/openclaw-mission-control&type=date&legend=top-left)](https://www.star-history.com/#manish-raana/openclaw-mission-control&type=date&legend=top-left)
