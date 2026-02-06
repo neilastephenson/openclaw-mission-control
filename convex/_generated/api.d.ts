@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as activity from "../activity.js";
 import type * as agents from "../agents.js";
 import type * as auth from "../auth.js";
 import type * as documents from "../documents.js";
@@ -17,6 +18,7 @@ import type * as messages from "../messages.js";
 import type * as openclaw from "../openclaw.js";
 import type * as queries from "../queries.js";
 import type * as seed from "../seed.js";
+import type * as stats from "../stats.js";
 import type * as tasks from "../tasks.js";
 
 import type {
@@ -26,6 +28,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  activity: typeof activity;
   agents: typeof agents;
   auth: typeof auth;
   documents: typeof documents;
@@ -35,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   openclaw: typeof openclaw;
   queries: typeof queries;
   seed: typeof seed;
+  stats: typeof stats;
   tasks: typeof tasks;
 }>;
 

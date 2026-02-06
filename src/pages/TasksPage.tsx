@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import MissionQueue from "../components/MissionQueue";
 import TaskDetailPanel from "../components/TaskDetailPanel";
 import AddTaskModal from "../components/AddTaskModal";
@@ -8,11 +8,6 @@ import { Id } from "../../convex/_generated/dataModel";
 const TasksPage: React.FC = () => {
 	const [selectedTaskId, setSelectedTaskId] = useState<Id<"tasks"> | null>(null);
 	const [showAddTaskModal, setShowAddTaskModal] = useState(false);
-	const [selectedDocumentId, setSelectedDocumentId] = useState<Id<"documents"> | null>(null);
-
-	const handlePreviewDocument = useCallback((id: Id<"documents">) => {
-		setSelectedDocumentId(id);
-	}, []);
 
 	return (
 		<>
@@ -34,7 +29,6 @@ const TasksPage: React.FC = () => {
 					<TaskDetailPanel
 						taskId={selectedTaskId}
 						onClose={() => setSelectedTaskId(null)}
-						onPreviewDocument={handlePreviewDocument}
 					/>
 				</>
 			)}

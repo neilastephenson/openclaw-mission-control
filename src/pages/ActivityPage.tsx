@@ -63,7 +63,7 @@ const ActivityPage: React.FC = () => {
 								</div>
 								<div className="text-sm text-foreground/90">
 									{activity.type === "status_update" && "Updated task status"}
-									{activity.type === "message" && activity.content}
+									{activity.type === "message" && activity.message}
 									{activity.type === "task_created" && "Created a task"}
 									{activity.type === "assignees_update" && "Updated assignees"}
 									{!["status_update", "message", "task_created", "assignees_update"].includes(activity.type) && activity.type}
