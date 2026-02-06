@@ -86,6 +86,7 @@ export const createTask = mutation({
     status: v.string(),
     tags: v.array(v.string()),
     borderColor: v.optional(v.string()),
+    projectId: v.optional(v.id("projects")),
     tenantId: v.string(),
   },
   handler: async (ctx, args) => {
@@ -96,6 +97,7 @@ export const createTask = mutation({
       assigneeIds: [],
       tags: args.tags,
       borderColor: args.borderColor,
+      projectId: args.projectId,
       tenantId: args.tenantId,
     });
     return taskId;
@@ -152,6 +154,7 @@ export const updateTask = mutation({
     title: v.optional(v.string()),
     description: v.optional(v.string()),
     tags: v.optional(v.array(v.string())),
+    projectId: v.optional(v.id("projects")),
     agentId: v.id("agents"),
   },
   handler: async (ctx, args) => {
@@ -178,7 +181,11 @@ export const updateTask = mutation({
       fields.tags = args.tags;
       updates.push("tags");
     }
-    
+    if (args.projectId !== undefined) {
+      fields.projectId = args.projectId;
+      updates.push("project");
+    }
+
     await ctx.db.patch(args.taskId, fields);
 
     if (updates.length > 0) {

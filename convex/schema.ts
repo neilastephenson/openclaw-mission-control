@@ -4,6 +4,20 @@ import { authTables } from "@convex-dev/auth/server";
 
 export default defineSchema({
 	...authTables,
+		projects: defineTable({
+			name: v.string(),
+			description: v.optional(v.string()),
+			status: v.union(
+				v.literal("active"),
+				v.literal("paused"),
+				v.literal("complete"),
+				v.literal("archived")
+			),
+			color: v.optional(v.string()),
+			tenantId: v.optional(v.string()),
+		})
+			.index("by_tenant", ["tenantId"])
+			.index("by_status", ["status"]),
 		agents: defineTable({
 			name: v.string(),
 			role: v.string(),
@@ -37,6 +51,7 @@ export default defineSchema({
 		assigneeIds: v.array(v.id("agents")),
 		tags: v.array(v.string()),
 		borderColor: v.optional(v.string()),
+		projectId: v.optional(v.id("projects")),
 		sessionKey: v.optional(v.string()),
 		openclawRunId: v.optional(v.string()),
 		startedAt: v.optional(v.number()),
@@ -44,7 +59,9 @@ export default defineSchema({
 			orgId: v.optional(v.string()),
 			workspaceId: v.optional(v.string()),
 			tenantId: v.optional(v.string()),
-		}).index("by_tenant", ["tenantId"]),
+		})
+			.index("by_tenant", ["tenantId"])
+			.index("by_project", ["projectId"]),
 		messages: defineTable({
 		taskId: v.id("tasks"),
 		fromAgentId: v.id("agents"),
