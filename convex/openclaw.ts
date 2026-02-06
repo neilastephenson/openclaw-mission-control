@@ -35,6 +35,16 @@ export const receiveAgentEvent = mutation({
 		message: v.optional(v.union(v.string(), v.null())),
 		response: v.optional(v.union(v.string(), v.null())),
 		eventType: v.optional(v.union(v.string(), v.null())),
+		projectId: v.optional(v.union(v.string(), v.null())),
+		usage: v.optional(
+			v.object({
+				inputTokens: v.optional(v.number()),
+				outputTokens: v.optional(v.number()),
+				totalTokens: v.optional(v.number()),
+				model: v.optional(v.string()),
+				cost: v.optional(v.number()),
+			})
+		),
 		document: v.optional(
 			v.object({
 				title: v.string(),
@@ -289,6 +299,24 @@ export const receiveAgentEvent = mutation({
 					});
 			}
 		}
+
+		// Store raw webhook event for usage tracking and analytics
+		await ctx.db.insert("webhookEvents", {
+			runId: args.runId,
+			action: args.action,
+			agentId: args.agentId ?? undefined,
+			sessionKey: args.sessionKey ?? undefined,
+			projectId: args.projectId ?? undefined,
+			taskId: task?._id,
+			source: args.source ?? undefined,
+			prompt: args.prompt ?? undefined,
+			response: args.response ?? undefined,
+			error: args.error ?? undefined,
+			eventType: args.eventType ?? undefined,
+			message: args.message ?? undefined,
+			usage: args.usage,
+			tenantId,
+		});
 	},
 });
 

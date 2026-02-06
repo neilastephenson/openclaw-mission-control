@@ -114,4 +114,31 @@ export default defineSchema({
 		windowStartMs: v.number(),
 		count: v.number(),
 	}).index("by_tenant", ["tenantId"]),
+	webhookEvents: defineTable({
+		runId: v.string(),
+		action: v.string(), // start | progress | end | error | document
+		agentId: v.optional(v.string()),
+		sessionKey: v.optional(v.string()),
+		projectId: v.optional(v.string()),
+		taskId: v.optional(v.id("tasks")),
+		source: v.optional(v.string()),
+		prompt: v.optional(v.string()),
+		response: v.optional(v.string()),
+		error: v.optional(v.string()),
+		eventType: v.optional(v.string()),
+		message: v.optional(v.string()),
+		usage: v.optional(
+			v.object({
+				inputTokens: v.optional(v.number()),
+				outputTokens: v.optional(v.number()),
+				totalTokens: v.optional(v.number()),
+				model: v.optional(v.string()),
+				cost: v.optional(v.number()),
+			})
+		),
+		tenantId: v.optional(v.string()),
+	})
+		.index("by_tenant", ["tenantId"])
+		.index("by_runId", ["runId"])
+		.index("by_agent", ["agentId"]),
 });

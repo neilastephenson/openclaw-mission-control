@@ -3,6 +3,8 @@ import SignOutButton from "./Signout";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { DEFAULT_TENANT_ID } from "../lib/tenant";
+import { IconSettings } from "@tabler/icons-react";
+import { Link } from "react-router-dom";
 
 type HeaderProps = {
 	onOpenAgents?: () => void;
@@ -11,14 +13,9 @@ type HeaderProps = {
 
 const Header: React.FC<HeaderProps> = ({ onOpenAgents, onOpenLiveFeed }) => {
 	const [time, setTime] = useState(new Date());
-	
-	// Fetch data for dynamic counts
-	const agents = useQuery(api.queries.listAgents, { tenantId: DEFAULT_TENANT_ID });
-	const tasks = useQuery(api.queries.listTasks, { tenantId: DEFAULT_TENANT_ID });
 
-	// Calculate counts
-	const activeAgentsCount = agents ? agents.filter(a => a.status === "active").length : 0;
-	const tasksInQueueCount = tasks ? tasks.filter(t => t.status !== "done").length : 0;
+	// Fetch quick stats
+	const stats = useQuery(api.stats.getQuickStats, { tenantId: DEFAULT_TENANT_ID });
 
 	useEffect(() => {
 		const timer = setInterval(() => setTime(new Date()), 1000);
@@ -71,19 +68,28 @@ const Header: React.FC<HeaderProps> = ({ onOpenAgents, onOpenLiveFeed }) => {
 			<div className="hidden md:flex items-center gap-10">
 				<div className="flex flex-col items-center">
 					<div className="text-2xl font-bold text-foreground">
-						{agents ? activeAgentsCount : "-"}
+						{stats ? stats.agentCount : "-"}
 					</div>
 					<div className="text-[10px] font-semibold text-muted-foreground tracking-tighter">
-						AGENTS ACTIVE
+						AGENTS
 					</div>
 				</div>
 				<div className="w-px h-8 bg-border" />
 				<div className="flex flex-col items-center">
 					<div className="text-2xl font-bold text-foreground">
-						{tasks ? tasksInQueueCount : "-"}
+						{stats ? stats.pendingApprovals : "-"}
 					</div>
 					<div className="text-[10px] font-semibold text-muted-foreground tracking-tighter">
-						TASKS IN QUEUE
+						PENDING
+					</div>
+				</div>
+				<div className="w-px h-8 bg-border" />
+				<div className="flex flex-col items-center">
+					<div className="text-2xl font-bold text-foreground">
+						{stats ? `$${stats.todayCost.toFixed(2)}` : "-"}
+					</div>
+					<div className="text-[10px] font-semibold text-muted-foreground tracking-tighter">
+						TODAY
 					</div>
 				</div>
 			</div>
@@ -109,6 +115,13 @@ const Header: React.FC<HeaderProps> = ({ onOpenAgents, onOpenLiveFeed }) => {
 					<span className="w-2 h-2 bg-[#0ca678] rounded-full" />
 					ONLINE
 				</div>
+				<Link
+					to="/settings"
+					className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-muted hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
+					aria-label="Settings"
+				>
+					<IconSettings size={18} />
+				</Link>
 				<SignOutButton />
 			</div>
 		</header>
