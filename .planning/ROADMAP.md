@@ -33,8 +33,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Fork stock repo, set up Convex, deploy to Vercel
-- [ ] 01-02-PLAN.md — Customize layout: agent sidebar, tab navigation, header stats
+- [ ] 01-01-PLAN.md — Fork stock repo, set up Convex, deploy to Vercel (DEFERRED: awaiting Convex auth)
+- [x] 01-02-PLAN.md — Customize layout: agent sidebar, tab navigation, header stats
 - [x] 01-03-PLAN.md — Enhance webhook integration: parse usage data, verify real-time pipeline
 
 ### Phase 2: Activity & Projects
@@ -95,7 +95,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 1/3 | In progress | - |
+| 1. Foundation | 2/3 | In progress (01-01 deferred) | - |
 | 2. Activity & Projects | 0/2 | Not started | - |
 | 3. Tasks & Usage | 0/2 | Not started | - |
 | 4. Approvals & API | 0/2 | Not started | - |
