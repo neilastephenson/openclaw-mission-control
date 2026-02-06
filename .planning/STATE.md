@@ -62,6 +62,12 @@ Recent decisions affecting current work:
 
 None yet.
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 001 | Implement Phase 2 - Projects View | 2026-02-06 | cb7c51a | [001-implement-phase2-projects-view](./quick/001-implement-phase2-projects-view/) |
+
 ### Blockers/Concerns
 
 [Issues that affect future work]
