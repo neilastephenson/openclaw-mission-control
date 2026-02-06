@@ -31,6 +31,7 @@ type AddTaskModalProps = {
 
 const AddTaskModal: React.FC<AddTaskModalProps> = ({ onClose, onCreated, initialAssigneeId }) => {
 	const agents = useQuery(api.queries.listAgents, { tenantId: DEFAULT_TENANT_ID });
+	const projects = useQuery(api.projects.list, { tenantId: DEFAULT_TENANT_ID });
 	const createTask = useMutation(api.tasks.createTask);
 	const updateAssignees = useMutation(api.tasks.updateAssignees);
 
@@ -40,6 +41,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ onClose, onCreated, initial
 	const [tagInput, setTagInput] = useState("");
 	const [tags, setTags] = useState<string[]>([]);
 	const [assigneeId, setAssigneeId] = useState(initialAssigneeId ?? "");
+	const [projectId, setProjectId] = useState("");
 	const [borderColor, setBorderColor] = useState("");
 	const [submitting, setSubmitting] = useState(false);
 
@@ -74,6 +76,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ onClose, onCreated, initial
 						status,
 						tags,
 						borderColor: borderColor || undefined,
+						projectId: projectId ? (projectId as Id<"projects">) : undefined,
 						tenantId: DEFAULT_TENANT_ID,
 					});
 
@@ -100,6 +103,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ onClose, onCreated, initial
 			status,
 			tags,
 			borderColor,
+			projectId,
 			assigneeId,
 			agents,
 			createTask,
@@ -178,6 +182,23 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ onClose, onCreated, initial
 								<option key={opt.value} value={opt.value}>
 									{opt.label}
 								</option>
+							))}
+						</select>
+					</div>
+
+					{/* Project */}
+					<div>
+						<label className="block text-[11px] font-semibold text-muted-foreground tracking-wide mb-1.5">
+							PROJECT
+						</label>
+						<select
+							value={projectId}
+							onChange={(e) => setProjectId(e.target.value)}
+							className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-transparent"
+						>
+							<option value="">No Project</option>
+							{projects?.filter(p => p.status !== "archived").map((p) => (
+								<option key={p._id} value={p._id}>{p.name}</option>
 							))}
 						</select>
 					</div>

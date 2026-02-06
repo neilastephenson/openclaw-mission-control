@@ -12,6 +12,7 @@ interface Task {
 	assigneeIds: Id<"agents">[];
 	tags: string[];
 	borderColor?: string;
+	projectId?: string;
 	lastMessageTime?: number;
 }
 
@@ -25,6 +26,8 @@ interface TaskCardProps {
 	currentUserAgentId?: Id<"agents">;
 	onArchive?: (taskId: Id<"tasks">) => void;
 	onPlay?: (taskId: Id<"tasks">) => void;
+	projectName?: string;
+	projectColor?: string;
 	isOverlay?: boolean;
 }
 
@@ -38,6 +41,8 @@ const TaskCard: React.FC<TaskCardProps> = ({
 	currentUserAgentId,
 	onArchive,
 	onPlay,
+	projectName,
+	projectColor,
 	isOverlay = false,
 }) => {
 	const {
@@ -137,6 +142,14 @@ const TaskCard: React.FC<TaskCardProps> = ({
 				)}
 			</div>
 			<div className="flex flex-wrap gap-1.5">
+				{projectName && (
+					<span
+						className="text-[10px] px-2 py-0.5 rounded font-medium text-white"
+						style={{ backgroundColor: projectColor || '#64748b' }}
+					>
+						{projectName}
+					</span>
+				)}
 				{task.tags.map((tag) => (
 					<span
 						key={tag}

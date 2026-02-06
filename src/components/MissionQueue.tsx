@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useConvex } from "convex/react";
+import { useSearchParams } from "react-router-dom";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
 import { IconArchive } from "@tabler/icons-react";
@@ -26,6 +27,7 @@ interface Task {
 	assigneeIds: Id<"agents">[];
 	tags: string[];
 	borderColor?: string;
+	projectId?: Id<"projects">;
 	lastMessageTime?: number;
 }
 
@@ -66,14 +68,32 @@ interface MissionQueueProps {
 const MissionQueue: React.FC<MissionQueueProps> = ({ selectedTaskId, onSelectTask }) => {
 	const tasks = useQuery(api.queries.listTasks, { tenantId: DEFAULT_TENANT_ID });
 	const agents = useQuery(api.queries.listAgents, { tenantId: DEFAULT_TENANT_ID });
+	const projects = useQuery(api.projects.list, { tenantId: DEFAULT_TENANT_ID });
 	const archiveTask = useMutation(api.tasks.archiveTask);
 	const updateStatus = useMutation(api.tasks.updateStatus);
 	const linkRun = useMutation(api.tasks.linkRun);
 	const [showArchived, setShowArchived] = useState(false);
+	const [filterProjectId, setFilterProjectId] = useState<string>("");
+	const [searchParams, setSearchParams] = useSearchParams();
 	const convex = useConvex();
 	const [activeTask, setActiveTask] = useState<Task | null>(null);
 
 	const currentUserAgent = agents?.find(a => a.name === "Manish");
+
+	// Read project filter from URL params on mount
+	useEffect(() => {
+		const projectParam = searchParams.get("project");
+		if (projectParam) setFilterProjectId(projectParam);
+	}, [searchParams]);
+
+	// Build project lookup map for task cards
+	const projectMap = useMemo(() => {
+		const map = new Map<string, { name: string; color?: string }>();
+		if (projects) {
+			projects.forEach(p => map.set(p._id, { name: p.name, color: p.color }));
+		}
+		return map;
+	}, [projects]);
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
@@ -222,6 +242,11 @@ const MissionQueue: React.FC<MissionQueueProps> = ({ selectedTaskId, onSelectTas
 	const displayColumns = showArchived ? [...columns, archivedColumn] : columns;
 	const archivedCount = tasks.filter((t) => t.status === "archived").length;
 
+	// Filter tasks by project if filterProjectId is set
+	const filteredTasks = filterProjectId
+		? tasks.filter(t => (t as any).projectId === filterProjectId)
+		: tasks;
+
 		return (
 			<main className="[grid-area:main] bg-secondary flex min-h-0 flex-col overflow-hidden">
 				<div className="shrink-0 flex items-center justify-between px-6 py-5 bg-white border-b border-border">
@@ -230,12 +255,29 @@ const MissionQueue: React.FC<MissionQueueProps> = ({ selectedTaskId, onSelectTas
 					MISSION QUEUE
 				</div>
 				<div className="flex gap-2">
+					<select
+						value={filterProjectId}
+						onChange={(e) => {
+							setFilterProjectId(e.target.value);
+							if (e.target.value) {
+								setSearchParams({ project: e.target.value });
+							} else {
+								setSearchParams({});
+							}
+						}}
+						className="text-[11px] font-semibold px-3 py-1 rounded bg-[#f0f0f0] text-[#999] border-none focus:outline-none focus:ring-1 focus:ring-[var(--accent-blue)]"
+					>
+						<option value="">All Projects</option>
+						{projects?.filter(p => p.status !== "archived").map((p) => (
+							<option key={p._id} value={p._id}>{p.name}</option>
+						))}
+					</select>
 					<div className="text-[11px] font-semibold px-3 py-1 rounded bg-muted text-muted-foreground flex items-center gap-1.5">
 						<span className="text-sm">📦</span>{" "}
-						{tasks.filter((t) => t.status === "inbox").length}
+						{filteredTasks.filter((t) => t.status === "inbox").length}
 					</div>
 					<div className="text-[11px] font-semibold px-3 py-1 rounded bg-[#f0f0f0] text-[#999]">
-						{tasks.filter((t) => t.status !== "done" && t.status !== "archived").length} active
+						{filteredTasks.filter((t) => t.status !== "done" && t.status !== "archived").length} active
 					</div>
 					<button
 						onClick={() => setShowArchived(!showArchived)}
@@ -266,9 +308,9 @@ const MissionQueue: React.FC<MissionQueueProps> = ({ selectedTaskId, onSelectTas
 						<KanbanColumn
 							key={col.id}
 							column={col}
-							taskCount={tasks.filter((t) => t.status === col.id).length}
+							taskCount={filteredTasks.filter((t) => t.status === col.id).length}
 						>
-							{tasks
+							{filteredTasks
 								.filter((t) => t.status === col.id)
 								.map((task) => (
 									<TaskCard
@@ -282,6 +324,8 @@ const MissionQueue: React.FC<MissionQueueProps> = ({ selectedTaskId, onSelectTas
 										currentUserAgentId={currentUserAgent?._id}
 										onArchive={handleArchive}
 										onPlay={handlePlay}
+										projectName={projectMap.get((task as any).projectId)?.name}
+										projectColor={projectMap.get((task as any).projectId)?.color}
 									/>
 								))}
 						</KanbanColumn>

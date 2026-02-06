@@ -33,6 +33,7 @@ const statusLabels: Record<string, string> = {
 const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ taskId, onClose, onPreviewDocument }) => {
   const tasks = useQuery(api.queries.listTasks, { tenantId: DEFAULT_TENANT_ID });
   const agents = useQuery(api.queries.listAgents, { tenantId: DEFAULT_TENANT_ID });
+  const projects = useQuery(api.projects.list, { tenantId: DEFAULT_TENANT_ID });
   const resources = useQuery(
     api.documents.listByTask,
     taskId ? { taskId, tenantId: DEFAULT_TENANT_ID } : "skip"
@@ -389,6 +390,31 @@ const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ taskId, onClose, onPr
           >
             {Object.entries(statusLabels).map(([key, label]) => (
               <option key={key} value={key}>{label}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Project */}
+        <div className="space-y-1">
+          <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Project</label>
+          <select
+            value={(task as any).projectId || ""}
+            onChange={(e) => {
+              if (currentUserAgent) {
+                updateTask({
+                  taskId: task._id,
+                  projectId: e.target.value ? (e.target.value as Id<"projects">) : undefined,
+                  agentId: currentUserAgent._id,
+                  tenantId: DEFAULT_TENANT_ID,
+                });
+              }
+            }}
+            disabled={!currentUserAgent}
+            className="w-full p-1.5 text-sm border border-border rounded bg-secondary text-foreground focus:outline-none focus:ring-1 focus:ring-[var(--accent-blue)] disabled:opacity-50"
+          >
+            <option value="">No Project</option>
+            {projects?.filter(p => p.status !== "archived").map((p) => (
+              <option key={p._id} value={p._id}>{p.name}</option>
             ))}
           </select>
         </div>
