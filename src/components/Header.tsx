@@ -55,12 +55,15 @@ const Header: React.FC<HeaderProps> = ({ onOpenAgents, onOpenLiveFeed }) => {
 					</button>
 				</div>
 				<div className="flex items-center gap-2 min-w-0">
-					<span className="text-2xl text-[var(--accent-orange)]">◇</span>
-					<h1 className="text-base md:text-lg font-semibold tracking-wider text-foreground truncate">
+					<span className="text-xl md:text-2xl text-[var(--accent-orange)]">◇</span>
+					<h1 className="hidden sm:block text-base md:text-lg font-semibold tracking-wider text-foreground">
 						MISSION CONTROL
 					</h1>
+					<h1 className="sm:hidden text-sm font-semibold tracking-wider text-foreground">
+						MC
+					</h1>
 				</div>
-				<div className="hidden sm:block text-xs text-muted-foreground bg-muted px-3 py-1 rounded-full font-medium">
+				<div className="hidden lg:block text-xs text-muted-foreground bg-muted px-3 py-1 rounded-full font-medium">
 					SiteName
 				</div>
 			</div>

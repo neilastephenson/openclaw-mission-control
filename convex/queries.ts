@@ -153,3 +153,17 @@ export const listMessages = query({
         return enrichedMessages;
 	},
 });
+
+// Debug query to check auth tables
+export const checkAuthTables = query({
+  args: {},
+  handler: async (ctx) => {
+    const users = await ctx.db.query("users").collect();
+    const accounts = await ctx.db.query("authAccounts").collect();
+    return {
+      usersCount: users.length,
+      accountsCount: accounts.length,
+      users: users.map(u => ({ id: u._id, email: (u as any).email })),
+    };
+  },
+});

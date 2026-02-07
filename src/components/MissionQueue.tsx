@@ -249,12 +249,12 @@ const MissionQueue: React.FC<MissionQueueProps> = ({ selectedTaskId, onSelectTas
 
 		return (
 			<main className="[grid-area:main] bg-secondary flex min-h-0 flex-col overflow-hidden">
-				<div className="shrink-0 flex items-center justify-between px-6 py-5 bg-white border-b border-border">
+				<div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 md:px-6 py-4 md:py-5 bg-white border-b border-border">
 				<div className="text-[11px] font-bold tracking-widest text-muted-foreground flex items-center gap-2">
 					<span className="w-1.5 h-1.5 bg-[var(--accent-orange)] rounded-full" />{" "}
 					MISSION QUEUE
 				</div>
-				<div className="flex gap-2">
+				<div className="flex flex-wrap gap-2">
 					<select
 						value={filterProjectId}
 						onChange={(e) => {
@@ -265,30 +265,30 @@ const MissionQueue: React.FC<MissionQueueProps> = ({ selectedTaskId, onSelectTas
 								setSearchParams({});
 							}
 						}}
-						className="text-[11px] font-semibold px-3 py-1 rounded bg-[#f0f0f0] text-[#999] border-none focus:outline-none focus:ring-1 focus:ring-[var(--accent-blue)]"
+						className="text-[11px] font-semibold px-3 py-1.5 rounded bg-[#f0f0f0] text-[#999] border-none focus:outline-none focus:ring-1 focus:ring-[var(--accent-blue)]"
 					>
 						<option value="">All Projects</option>
 						{projects?.filter(p => p.status !== "archived").map((p) => (
 							<option key={p._id} value={p._id}>{p.name}</option>
 						))}
 					</select>
-					<div className="text-[11px] font-semibold px-3 py-1 rounded bg-muted text-muted-foreground flex items-center gap-1.5">
+					<div className="text-[11px] font-semibold px-3 py-1.5 rounded bg-muted text-muted-foreground flex items-center gap-1.5">
 						<span className="text-sm">📦</span>{" "}
 						{filteredTasks.filter((t) => t.status === "inbox").length}
 					</div>
-					<div className="text-[11px] font-semibold px-3 py-1 rounded bg-[#f0f0f0] text-[#999]">
+					<div className="hidden sm:flex text-[11px] font-semibold px-3 py-1.5 rounded bg-[#f0f0f0] text-[#999]">
 						{filteredTasks.filter((t) => t.status !== "done" && t.status !== "archived").length} active
 					</div>
 					<button
 						onClick={() => setShowArchived(!showArchived)}
-						className={`text-[11px] font-semibold px-3 py-1 rounded flex items-center gap-1.5 transition-colors ${
+						className={`text-[11px] font-semibold px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors ${
 							showArchived
 								? "bg-[var(--accent-blue)] text-white"
 								: "bg-[#f0f0f0] text-[#999] hover:bg-[#e5e5e5]"
 						}`}
 					>
 						<IconArchive size={14} />
-						{showArchived ? "Hide Archived" : "Show Archived"}
+						<span className="hidden sm:inline">{showArchived ? "Hide Archived" : "Show Archived"}</span>
 						{archivedCount > 0 && (
 							<span className={`px-1.5 rounded-full text-[10px] ${showArchived ? "bg-white/20" : "bg-[#d0d0d0]"}`}>
 								{archivedCount}
@@ -303,7 +303,7 @@ const MissionQueue: React.FC<MissionQueueProps> = ({ selectedTaskId, onSelectTas
 				onDragStart={handleDragStart}
 				onDragEnd={handleDragEnd}
 			>
-					<div className={`flex-1 min-h-0 grid gap-px bg-border overflow-x-auto overflow-y-hidden ${showArchived ? "grid-cols-6" : "grid-cols-5"}`}>
+					<div className={`flex-1 min-h-0 flex md:grid gap-px bg-border overflow-x-auto overflow-y-hidden ${showArchived ? "md:grid-cols-6" : "md:grid-cols-5"}`}>
 					{displayColumns.map((col) => (
 						<KanbanColumn
 							key={col.id}

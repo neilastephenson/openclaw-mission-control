@@ -59,11 +59,11 @@ function formatTimeRemaining(expiresAt: number): string {
 }
 
 const ApprovalsPage: React.FC = () => {
-	const [filter, setFilter] = useState<"all" | "pending" | "resolved">("pending");
+	const [filter, setFilter] = useState<"all" | "pending" | "resolved">("all");
 
+	// Fetch all approvals and filter client-side to avoid query issues
 	const approvals = useQuery(api.approvals.list, {
 		tenantId: DEFAULT_TENANT_ID,
-		status: filter === "pending" ? "pending" : undefined,
 		limit: 100,
 	});
 
@@ -90,10 +90,12 @@ const ApprovalsPage: React.FC = () => {
 		}
 	};
 
-	const filteredApprovals =
-		filter === "resolved"
-			? approvals?.filter((a) => a.status !== "pending")
-			: approvals;
+	// Filter client-side
+	const filteredApprovals = approvals?.filter((a) => {
+		if (filter === "pending") return a.status === "pending";
+		if (filter === "resolved") return a.status !== "pending";
+		return true;
+	});
 
 	const pendingCount = approvals?.filter((a) => a.status === "pending").length || 0;
 
@@ -118,7 +120,7 @@ const ApprovalsPage: React.FC = () => {
 
 				{/* Filter tabs */}
 				<div className="flex gap-2 mb-6">
-					{(["pending", "all", "resolved"] as const).map((f) => (
+					{(["all", "pending", "resolved"] as const).map((f) => (
 						<button
 							key={f}
 							onClick={() => setFilter(f)}
@@ -153,7 +155,7 @@ const ApprovalsPage: React.FC = () => {
 								<div className="flex items-start justify-between">
 									<div className="flex items-start gap-3">
 										<div className="p-2 rounded-lg bg-muted text-muted-foreground">
-											{typeIcons[approval.type]}
+											{typeIcons[approval.type] || <IconAlertTriangle size={18} />}
 										</div>
 										<div>
 											<div className="flex items-center gap-2">
@@ -162,7 +164,7 @@ const ApprovalsPage: React.FC = () => {
 												</h3>
 												<span
 													className={`px-2 py-0.5 rounded-full text-xs border ${
-														statusColors[approval.status]
+														statusColors[approval.status] || statusColors.pending
 													}`}
 												>
 													{approval.status}
@@ -172,7 +174,7 @@ const ApprovalsPage: React.FC = () => {
 												{approval.description}
 											</p>
 											<div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-												<span>{typeLabels[approval.type]}</span>
+												<span>{typeLabels[approval.type] || "Unknown"}</span>
 												{approval.agentName && (
 													<span>• {approval.agentName}</span>
 												)}

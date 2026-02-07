@@ -12,6 +12,7 @@ import type * as activity from "../activity.js";
 import type * as agents from "../agents.js";
 import type * as approvals from "../approvals.js";
 import type * as auth from "../auth.js";
+import type * as debug from "../debug.js";
 import type * as documents from "../documents.js";
 import type * as fix_loki from "../fix_loki.js";
 import type * as http from "../http.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   agents: typeof agents;
   approvals: typeof approvals;
   auth: typeof auth;
+  debug: typeof debug;
   documents: typeof documents;
   fix_loki: typeof fix_loki;
   http: typeof http;
