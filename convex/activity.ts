@@ -66,3 +66,50 @@ export const listActivityByRun = query({
 		return events;
 	},
 });
+
+import { mutation } from "./_generated/server";
+
+/**
+ * Log activity from API calls (simplified - uses agentName string instead of ID)
+ */
+export const logSimple = mutation({
+	args: {
+		type: v.string(),
+		message: v.string(),
+		agentName: v.string(),
+		targetId: v.optional(v.id("tasks")),
+		tenantId: v.string(),
+	},
+	handler: async (ctx, args) => {
+		// Find or create a placeholder agent
+		const agents = await ctx.db
+			.query("agents")
+			.withIndex("by_tenant", (q) => q.eq("tenantId", args.tenantId))
+			.filter((q) => q.eq(q.field("name"), args.agentName))
+			.first();
+
+		let agentId = agents?._id;
+
+		// If no agent found, create a placeholder
+		if (!agentId) {
+			agentId = await ctx.db.insert("agents", {
+				name: args.agentName,
+				role: "API Agent",
+				status: "idle",
+				level: "INT",
+				avatar: "🤖",
+				tenantId: args.tenantId,
+			});
+		}
+
+		await ctx.db.insert("activities", {
+			type: args.type,
+			agentId,
+			message: args.message,
+			targetId: args.targetId,
+			tenantId: args.tenantId,
+		});
+
+		return { ok: true };
+	},
+});

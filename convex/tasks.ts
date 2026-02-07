@@ -199,3 +199,28 @@ export const updateTask = mutation({
     }
   },
 });
+
+// Simplified status update for API calls (no agent ID required)
+export const updateStatusSimple = mutation({
+  args: {
+    taskId: v.id("tasks"),
+    tenantId: v.string(),
+    status: v.union(
+      v.literal("inbox"),
+      v.literal("assigned"),
+      v.literal("in_progress"),
+      v.literal("review"),
+      v.literal("done"),
+      v.literal("archived")
+    ),
+  },
+  handler: async (ctx, args) => {
+    const task = await ctx.db.get(args.taskId);
+    if (!task || task.tenantId !== args.tenantId) {
+      throw new Error("Task not found");
+    }
+
+    await ctx.db.patch(args.taskId, { status: args.status });
+    return { ok: true };
+  },
+});
