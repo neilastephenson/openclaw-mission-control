@@ -16,10 +16,12 @@ import type * as fix_loki from "../fix_loki.js";
 import type * as http from "../http.js";
 import type * as messages from "../messages.js";
 import type * as openclaw from "../openclaw.js";
+import type * as projects from "../projects.js";
 import type * as queries from "../queries.js";
 import type * as seed from "../seed.js";
 import type * as stats from "../stats.js";
 import type * as tasks from "../tasks.js";
+import type * as usage from "../usage.js";
 
 import type {
   ApiFromModules,
@@ -36,10 +38,12 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   messages: typeof messages;
   openclaw: typeof openclaw;
+  projects: typeof projects;
   queries: typeof queries;
   seed: typeof seed;
   stats: typeof stats;
   tasks: typeof tasks;
+  usage: typeof usage;
 }>;
 
 /**
