@@ -106,6 +106,36 @@ export default defineSchema({
 			workspaceId: v.optional(v.string()),
 			tenantId: v.optional(v.string()),
 		}),
+	approvals: defineTable({
+		type: v.union(
+			v.literal("delete_file"),
+			v.literal("external_send"),
+			v.literal("spawn_agent"),
+			v.literal("modify_config"),
+			v.literal("dangerous_command"),
+			v.literal("other")
+		),
+		status: v.union(
+			v.literal("pending"),
+			v.literal("approved"),
+			v.literal("denied"),
+			v.literal("expired")
+		),
+		title: v.string(),
+		description: v.string(),
+		agentId: v.optional(v.string()),
+		agentName: v.optional(v.string()),
+		taskId: v.optional(v.id("tasks")),
+		metadata: v.optional(v.any()),
+		expiresAt: v.optional(v.number()),
+		resolvedAt: v.optional(v.number()),
+		resolvedBy: v.optional(v.string()),
+		notificationSent: v.optional(v.boolean()),
+		tenantId: v.optional(v.string()),
+	})
+		.index("by_tenant", ["tenantId"])
+		.index("by_status", ["status"])
+		.index("by_tenant_status", ["tenantId", "status"]),
 	apiTokens: defineTable({
 		tokenHash: v.string(),
 		tokenPrefix: v.string(),

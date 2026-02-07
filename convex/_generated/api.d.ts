@@ -10,6 +10,7 @@
 
 import type * as activity from "../activity.js";
 import type * as agents from "../agents.js";
+import type * as approvals from "../approvals.js";
 import type * as auth from "../auth.js";
 import type * as documents from "../documents.js";
 import type * as fix_loki from "../fix_loki.js";
@@ -32,6 +33,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   activity: typeof activity;
   agents: typeof agents;
+  approvals: typeof approvals;
   auth: typeof auth;
   documents: typeof documents;
   fix_loki: typeof fix_loki;

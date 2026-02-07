@@ -47,8 +47,14 @@ export const getQuickStats = query({
 		// Count total agents
 		const agentCount = agents.length;
 
-		// Pending approvals (placeholder - will be wired in Phase 4)
-		const pendingApprovals = 0;
+		// Count pending approvals
+		const pendingApprovalsList = await ctx.db
+			.query("approvals")
+			.withIndex("by_tenant_status", (q) =>
+				q.eq("tenantId", args.tenantId).eq("status", "pending")
+			)
+			.collect();
+		const pendingApprovals = pendingApprovalsList.length;
 
 		// Calculate today's cost from webhook events
 		const todayStart = getStartOfDay(Date.now());
